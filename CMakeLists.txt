@@ -8,10 +8,12 @@ INCLUDE(cmake/ModuleCompileOptions.cmake)
 ModuleSetCompileOptions()
 ModuleSetWinCompilerFlags()
 
+
 LibImport("dmcrypto" "src/dmcrypto")
 
 IF(PROJECT_IS_TOP_LEVEL)
-    ExeImport("test" "dmcrypto")
+    ModuleImport("dmtest" "thirdparty/dmtest")
+    ExeImport("test" "dmcrypto;dmtest")
 ENDIF()
 
 

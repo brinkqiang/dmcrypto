@@ -4,7 +4,7 @@
 
 #include "dmmd5.h"
 #include "dmdes.h"
-#include "dmrc.h"
+#include "dmrc.hpp"
 #include "dmbase64.h"
 #include "dmcrc.h"
 #include "dmaes.h"
