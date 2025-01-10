@@ -83,4 +83,9 @@ TEST(DMCrypto, DMCrypto_AES) {
     std::string cfbEncrypted = aes.EncryptCFB(plain, key, iv);
     std::string cfbDecrypted = aes.DecryptCFB(cfbEncrypted, key, iv);
     EXPECT_EQ(cfbDecrypted, plain);
+
+    // TEST CBC mode
+    std::string cbcEncrypted = aes.EncryptCBC(plain, key, iv);
+    std::string cbcDecrypted = aes.DecryptCBC(cbcEncrypted, key, iv);
+    EXPECT_EQ(cbcDecrypted, plain);
 }
