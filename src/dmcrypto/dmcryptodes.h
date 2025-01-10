@@ -46,7 +46,7 @@ void DESSetDecKey( DMDESContext *pCtx, uint8_t acKey[8] );
 //
 //
 //
-void DESRandomKey( DMESBlock *pKey );
+void DESRandomKey( DMDESBlock *pKey );
 
 //
 // @brief          DES-ECB block encryption/decryption
@@ -72,7 +72,7 @@ void DESCryptECB( DMDESContext	*pCtx,
 void DESCryptCBC( DMDESContext	*pCtx,
 	int32_t			nMode,
 	int32_t			nLength,
-	DMESBlock		*pIV,
+	DMDESBlock		*pIV,
 	uint8_t *pacInput,
 	uint8_t *pacOutput );
 

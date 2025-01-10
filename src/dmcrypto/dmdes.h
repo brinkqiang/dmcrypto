@@ -58,7 +58,7 @@ typedef struct stDESContext
 typedef struct stDESBlock
 {
     uint8_t acBlock[8];
-} DMESBlock;
+} DMDESBlock;
 
 /**
 * @brief typedef 3-DES context structure
@@ -96,7 +96,7 @@ public:
     * 输入输出参数，将被初始化的DES块结构
     * @return void
     */
-    void DESGenKey(DMESBlock *pIV);
+    void DESGenKey(DMDESBlock *pIV);
 
     /**
     * @brief
@@ -115,7 +115,7 @@ public:
     * @param oKey : [in]des block [输入参数]DES块
     * @return void
     */
-    void DESGenEncKeySche(DMDESContext *pCtx, DMESBlock &oKey);
+    void DESGenEncKeySche(DMDESContext *pCtx, DMDESBlock &oKey);
 
     /**
     * @brief
@@ -135,7 +135,7 @@ public:
     * @param oKey : [in]des block [输入参数]DES块
     * @return void
     */
-    void DESGenDecKeySche(DMDESContext *pCtx, DMESBlock &oKey);
+    void DESGenDecKeySche(DMDESContext *pCtx, DMDESBlock &oKey);
 
     /**
     * @brief
@@ -158,7 +158,7 @@ public:
     * @return void
     */
     void DESEncryptNCBC(DMDESContext *pCtx,
-                                DMESBlock *pIV,
+                                DMDESBlock *pIV,
                                 int32_t nInLen,
                                 uint8_t *pInput,
                                 uint8_t *pOutput);
@@ -190,7 +190,7 @@ public:
     * @return void
     */
     void DESDecryptNCBC(DMDESContext *pCtx,
-                                DMESBlock *pIV,
+                                DMDESBlock *pIV,
                                 int32_t  nInLen,
                                 uint8_t *pInput,
                                 uint8_t *pOutput);

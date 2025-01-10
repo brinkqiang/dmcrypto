@@ -390,7 +390,7 @@ void DESCryptCBC(DMDESContext *pCtx,
     int32_t nMode,
     int32_t nLength,
     //UCHAR iv[8],
-    DMESBlock		*pIV,
+    DMDESBlock		*pIV,
     uint8_t *pacInput,
     uint8_t *pacOutput)
 {
@@ -436,7 +436,7 @@ void DESCryptCBC(DMDESContext *pCtx,
 }
 
 // Generate 8 bytes random number
-void DESRandomKey(DMESBlock *pBlock)
+void DESRandomKey(DMDESBlock *pBlock)
 {
     srand((unsigned)time(0) + rand());
 
@@ -658,7 +658,7 @@ int32_t DESSelfTest(int32_t nVerbose)
     uint8_t key[24];
     uint8_t buf[8];
     uint8_t prv[8];
-    DMESBlock		iv;
+    DMDESBlock		iv;
 
     memset(key, 0, 24);
 

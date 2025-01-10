@@ -1,7 +1,7 @@
 #include "dmdes.h"
 #include "dmcryptodes.h"
 
-void CDMDes::DESGenKey(DMESBlock* pIV)
+void CDMDes::DESGenKey(DMDESBlock* pIV)
 {
     DESRandomKey(pIV);
 }
@@ -11,7 +11,7 @@ void CDMDes::DES3GenKey(DMDES3Block* pIV)
     GenDES3Key(pIV);
 }
 
-void CDMDes::DESGenEncKeySche(DMDESContext *pCtx, DMESBlock& oKey)
+void CDMDes::DESGenEncKeySche(DMDESContext *pCtx, DMDESBlock& oKey)
 {
     DESSetEncKey(pCtx, oKey.acBlock);
 }
@@ -22,7 +22,7 @@ void CDMDes::DES3GenEncKeySche(DMDES3Context *pCtx, DMDES3Block& oKey)
 }
 
 
-void CDMDes::DESGenDecKeySche(DMDESContext *pCtx, DMESBlock& oKey)
+void CDMDes::DESGenDecKeySche(DMDESContext *pCtx, DMDESBlock& oKey)
 {
     DESSetDecKey(pCtx, oKey.acBlock);
 }
@@ -33,15 +33,15 @@ void CDMDes::DES3GenDecKeySche(DMDES3Context *pCtx, DMDES3Block& oKey)
 }
 
 void CDMDes::DESEncryptNCBC(DMDESContext    *pCtx,
-    DMESBlock		 *pIV,
+    DMDESBlock		 *pIV,
     int32_t		 nLength,
     unsigned char *pInput,
     unsigned char *pOutput)
 {
-    DMESBlock IVBak;
-    memcpy(&IVBak, (const void*)pIV, sizeof(DMESBlock));
+    DMDESBlock IVBak;
+    memcpy(&IVBak, (const void*)pIV, sizeof(DMDESBlock));
     DESCryptCBC(pCtx, DES_ENCRYPT, nLength, pIV, pInput, pOutput);
-    memcpy(pIV, (const void*)&IVBak, sizeof(DMESBlock));
+    memcpy(pIV, (const void*)&IVBak, sizeof(DMDESBlock));
 }
 
 void CDMDes::DESEncryptNCBC(DMDES3Context   *pCtx,
@@ -57,15 +57,15 @@ void CDMDes::DESEncryptNCBC(DMDES3Context   *pCtx,
 }
 
 void CDMDes::DESDecryptNCBC(DMDESContext	 *pCtx,
-    DMESBlock		 *pIV,
+    DMDESBlock		 *pIV,
     int32_t		 nLength,
     unsigned char *pInput,
     unsigned char *pOutput)
 {
-    DMESBlock IVBak;
-    memcpy(&IVBak, (const void*)pIV, sizeof(DMESBlock));
+    DMDESBlock IVBak;
+    memcpy(&IVBak, (const void*)pIV, sizeof(DMDESBlock));
     DESCryptCBC(pCtx, DES_DECRYPT, nLength, pIV, pInput, pOutput);
-    memcpy(pIV, (const void*)&IVBak, sizeof(DMESBlock));
+    memcpy(pIV, (const void*)&IVBak, sizeof(DMDESBlock));
 }
 
 void CDMDes::DESDecryptNCBC(DMDES3Context	 *pCtx,
