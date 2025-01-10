@@ -16,6 +16,7 @@ public:
 
     virtual ~CDMAES();
 
+
 private:
     int Nb;
     int Nk;
@@ -371,5 +372,78 @@ static const unsigned char CMDS[4][4] = {
 static const unsigned char INV_CMDS[4][4] = {
     {14, 11, 13, 9}, {9, 14, 11, 13}, {13, 9, 14, 11}, {11, 13, 9, 14} };
 
+const int BLOCK_SIZE = 16; // 固定块大小
+const uint8_t HEX[BLOCK_SIZE] = { 0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f };
 
+static inline std::pair<int, int> findPaddingIndex(const std::string& str) {
+	int result[2] = { -1, -1 };
+	int length = static_cast<int>(str.size());
+	for (int i = 0; i < length; ++i) {
+		char c = str[length - 1 - i];
+		if (c != '\0') {
+			result[0] = i;
+			for (int k = 0; k < BLOCK_SIZE; ++k) {
+				if (HEX[k] == static_cast<uint8_t>(c)) {
+					if (k == 0) k = BLOCK_SIZE; // 特殊情况
+					result[1] = k;
+					return { result[0], result[1] };
+				}
+			}
+			return { result[0], result[1] };
+		}
+	}
+	return { -1, -1 };
+}
+
+static inline std::string getPKCS7PaddingInput(const std::string& input) {
+	int inLength = static_cast<int>(input.length());
+	int remainder = inLength % BLOCK_SIZE;
+
+	// 计算填充后的总长度
+	int group = inLength / BLOCK_SIZE;
+	int size = BLOCK_SIZE * (group + 1);
+
+	std::string paddingInput(size, '\0');
+
+	// 填充数据
+	for (int i = 0; i < size; i++) {
+		if (i < inLength) {
+			paddingInput[i] = input[i];
+		}
+		else {
+			if (remainder == 0) {
+				// 刚好是16倍数,就填充16个16
+				paddingInput[i] = HEX[0];
+			}
+			else {
+				// 不足16位,补差值
+				paddingInput[i] = HEX[size - inLength];
+			}
+		}
+	}
+	return paddingInput;
+}
+
+static inline std::string removePKCS7Padding(const std::string& input) {
+	auto [offSetIndex, lastChar] = findPaddingIndex(input);
+	size_t inputLength = input.length();
+	size_t noZeroIndex = inputLength - offSetIndex;
+
+
+	if (lastChar >= 0 && offSetIndex >= 0) {
+		bool success = true;
+		for (int i = 0; i < lastChar; ++i) {
+			size_t index = noZeroIndex - lastChar + i;
+
+			if (HEX[lastChar] != static_cast<uint8_t>(input[index])) {
+				success = false;
+				break;
+			}
+		}
+		if (success) {
+			return input.substr(0, noZeroIndex - lastChar);
+		}
+	}
+	return input; // 如果未找到有效填充，直接返回原始输入
+}
 #endif // __DMAES_H__

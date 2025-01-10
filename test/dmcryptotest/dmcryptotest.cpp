@@ -69,23 +69,34 @@ TEST(DMCrypto, DMCrypto_DES3) {
 }
 
 TEST(DMCrypto, DMCrypto_AES) {
-    CDMAES aes;
-    std::string plain = "hello world12345"; // 16 bytes
+
+	std::string input = "Hello, PKCS7!";
+	std::string padded = getPKCS7PaddingInput(input);
+
+	std::string unpadded = removePKCS7Padding(padded);
+	
+	EXPECT_EQ(unpadded, input);
+
+	CDMAES aes;
+    std::string plain = "hello world1234511111"; // 16 bytes
     std::string iv = "hello world";
     std::string key = "hello world";
     
     // Test ECB mode
-    std::string ecbEncrypted = aes.EncryptECB(plain, key);
-    std::string ecbDecrypted = aes.DecryptECB(ecbEncrypted, key);
+
+    std::string ecbEncrypted = aes.EncryptECB(getPKCS7PaddingInput(plain), key);
+
+    std::string ecbDecrypted = removePKCS7Padding(aes.DecryptECB(ecbEncrypted, key));
+
     EXPECT_EQ(ecbDecrypted, plain);
     
     // Test CFB mode
-    std::string cfbEncrypted = aes.EncryptCFB(plain, key, iv);
-    std::string cfbDecrypted = aes.DecryptCFB(cfbEncrypted, key, iv);
+    std::string cfbEncrypted = aes.EncryptCFB(getPKCS7PaddingInput(plain), key, iv);
+    std::string cfbDecrypted = removePKCS7Padding(aes.DecryptCFB(cfbEncrypted, key, iv));
     EXPECT_EQ(cfbDecrypted, plain);
 
     // TEST CBC mode
-    std::string cbcEncrypted = aes.EncryptCBC(plain, key, iv);
-    std::string cbcDecrypted = aes.DecryptCBC(cbcEncrypted, key, iv);
+    std::string cbcEncrypted = aes.EncryptCBC(getPKCS7PaddingInput(plain), key, iv);
+    std::string cbcDecrypted = removePKCS7Padding(aes.DecryptCBC(cbcEncrypted, key, iv));
     EXPECT_EQ(cbcDecrypted, plain);
 }
