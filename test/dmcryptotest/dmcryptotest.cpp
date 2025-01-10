@@ -70,7 +70,7 @@ TEST(DMCrypto, DMCrypto_DES3) {
 
 TEST(DMCrypto, DMCrypto_AES) {
 
-	std::string input = "Hello, PKCS7!";
+	std::string input = "hello world12345111";
 	std::string padded = getPKCS7PaddingInput(input);
 
 	std::string unpadded = removePKCS7Padding(padded);
@@ -78,7 +78,7 @@ TEST(DMCrypto, DMCrypto_AES) {
 	EXPECT_EQ(unpadded, input);
 
 	CDMAES aes;
-    std::string plain = "hello world1234511111"; // 16 bytes
+    std::string plain = "hello world12345"; // 16 bytes
     std::string iv = "hello world";
     std::string key = "hello world";
     

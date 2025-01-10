@@ -376,23 +376,19 @@ const int BLOCK_SIZE = 16; // 固定块大小
 const uint8_t HEX[BLOCK_SIZE] = { 0x10,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f };
 
 static inline std::pair<int, int> findPaddingIndex(const std::string& str) {
-	int result[2] = { -1, -1 };
 	int length = static_cast<int>(str.size());
-	for (int i = 0; i < length; ++i) {
-		char c = str[length - 1 - i];
-		if (c != '\0') {
-			result[0] = i;
-			for (int k = 0; k < BLOCK_SIZE; ++k) {
-				if (HEX[k] == static_cast<uint8_t>(c)) {
-					if (k == 0) k = BLOCK_SIZE; // 特殊情况
-					result[1] = k;
-					return { result[0], result[1] };
-				}
-			}
-			return { result[0], result[1] };
+	if (length == 0) return { -1, -1 };
+
+	uint8_t lastChar = static_cast<uint8_t>(str[length - 1]);
+	if (lastChar > BLOCK_SIZE || lastChar == 0) return { -1, -1 };
+
+	for (int i = 1; i <= lastChar; ++i) {
+		if (static_cast<uint8_t>(str[length - i]) != lastChar) {
+			return { -1, -1 };
 		}
 	}
-	return { -1, -1 };
+
+	return { length - lastChar, lastChar };
 }
 
 static inline std::string getPKCS7PaddingInput(const std::string& input) {
@@ -400,8 +396,7 @@ static inline std::string getPKCS7PaddingInput(const std::string& input) {
 	int remainder = inLength % BLOCK_SIZE;
 
 	// 计算填充后的总长度
-	int group = inLength / BLOCK_SIZE;
-	int size = BLOCK_SIZE * (group + 1);
+	int size = inLength + (remainder == 0 ? BLOCK_SIZE : BLOCK_SIZE - remainder);
 
 	std::string paddingInput(size, '\0');
 
@@ -411,14 +406,7 @@ static inline std::string getPKCS7PaddingInput(const std::string& input) {
 			paddingInput[i] = input[i];
 		}
 		else {
-			if (remainder == 0) {
-				// 刚好是16倍数,就填充16个16
-				paddingInput[i] = HEX[0];
-			}
-			else {
-				// 不足16位,补差值
-				paddingInput[i] = HEX[size - inLength];
-			}
+			paddingInput[i] = static_cast<char>(size - inLength);
 		}
 	}
 	return paddingInput;
@@ -426,23 +414,8 @@ static inline std::string getPKCS7PaddingInput(const std::string& input) {
 
 static inline std::string removePKCS7Padding(const std::string& input) {
 	auto [offSetIndex, lastChar] = findPaddingIndex(input);
-	size_t inputLength = input.length();
-	size_t noZeroIndex = inputLength - offSetIndex;
-
-
-	if (lastChar >= 0 && offSetIndex >= 0) {
-		bool success = true;
-		for (int i = 0; i < lastChar; ++i) {
-			size_t index = noZeroIndex - lastChar + i;
-
-			if (HEX[lastChar] != static_cast<uint8_t>(input[index])) {
-				success = false;
-				break;
-			}
-		}
-		if (success) {
-			return input.substr(0, noZeroIndex - lastChar);
-		}
+	if (offSetIndex >= 0 && lastChar > 0) {
+		return input.substr(0, offSetIndex);
 	}
 	return input; // 如果未找到有效填充，直接返回原始输入
 }
