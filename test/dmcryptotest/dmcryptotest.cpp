@@ -39,6 +39,21 @@ TEST(DMCrypto, DMCrypto_Base64) {
 }
 
 TEST(DMCrypto, DMCrypto_DES) {
+	CDMDes des;
+	DMDESBlock block;
+	DMDESContext encCtx, decCtx;
+
+	des.DESGenKey(&block);
+	des.DESGenEncKeySche(&encCtx, block);
+	des.DESGenDecKeySche(&decCtx, block);
+
+	std::string input = "hello world";
+	std::string encrypted = des.Encode(&encCtx, &block, input);
+	std::string decrypted = des.Decode(&decCtx, &block, encrypted);
+	EXPECT_EQ(decrypted, input);
+}
+
+TEST(DMCrypto, DMCrypto_DES3) {
     CDMDes des;
     DMDES3Block block;
     DMDES3Context encCtx, decCtx;

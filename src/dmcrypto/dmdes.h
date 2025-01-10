@@ -215,9 +215,11 @@ public:
         DMDES3Block *pIV,
         const std::string& strInput);
 
-    std::string Decode(DMDES3Context *pCtx,
+    std::string Encode(DMDESContext* pCtx, DMDESBlock* pIV, const std::string& strInput);
+    std::string Decode(DMDES3Context* pCtx,
         DMDES3Block *pIV,
         const std::string& strInput);
+    std::string Decode(DMDESContext* pCtx, DMDESBlock* pIV, const std::string& strInput);
 };
 
     /** @} */

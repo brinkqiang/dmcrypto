@@ -105,3 +105,27 @@ std::string CDMDes::Decode(DMDES3Context *pCtx, DMDES3Block *pIV, const std::str
     return strOutput;
 }
 
+std::string CDMDes::Encode(DMDESContext* pCtx, DMDESBlock* pIV, const std::string& strInput)
+{
+	DMDESBlock IVBak;
+	memcpy(&IVBak, (const void*)pIV, sizeof(DMDESBlock));
+	std::string strOutput;
+	int nSize = (strInput.size() % 8) ? ((strInput.size() / 8) + 1) * 8 : (strInput.size());
+	strOutput.resize(nSize);
+	DESCryptCBC(pCtx, DES_ENCRYPT, strInput.size(), pIV, (uint8_t*)strInput.data(), (uint8_t*)strOutput.data());
+	memcpy(pIV, (const void*)&IVBak, sizeof(DMDESBlock));
+
+	return strOutput;
+}
+
+std::string CDMDes::Decode(DMDESContext* pCtx, DMDESBlock* pIV, const std::string& strInput)
+{
+	DMDESBlock IVBak;
+	memcpy(&IVBak, (const void*)pIV, sizeof(DMDESBlock));
+	std::string strOutput;
+	strOutput.resize(strInput.size());
+	DESCryptCBC(pCtx, DES_DECRYPT, strInput.size(), pIV, (uint8_t*)strInput.data(), (uint8_t*)strOutput.data());
+	memcpy(pIV, (const void*)&IVBak, sizeof(DMDESBlock));
+	strOutput.resize(strlen(strOutput.data()));
+	return strOutput;
+}
