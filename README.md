@@ -26,6 +26,5 @@ dmcrypto
 ```cpp
 ```
 ## Contacts
-[![Join the chat](https://badges.gitter.im/brinkqiang/dmcrypto/Lobby.svg)](https://gitter.im/brinkqiang/dmcrypto)
 
 ## Thanks
